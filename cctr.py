@@ -16,13 +16,13 @@ special_commands: dict[str] = {
 }
 
 
-def get_char_list(set: str)-> list[str]:
-    if len(set) == 1:
-        return [set]
-    elif set in special_commands:
-        return special_commands[set]
+def get_char_list(set_input: str) -> list[str]:
+    if len(set_input) == 1:
+        return [set_input]
+    elif set_input in special_commands:
+        return special_commands[set_input]
     else:
-        return [chr(i) for i in range(ord(set[0]), ord(set[2])+1)]
+        return [chr(i) for i in range(ord(set_input[0]), ord(set_input[2]) + 1)]
 
 
 def generate_sub_mappings(from_set: str, to_set: str)->dict[str]:
@@ -58,7 +58,14 @@ def tr_driver() -> None:
         print(result)
     elif arg_1 == "-ds":
         # delete first, then squash
-        ...
+        del_mappings = generate_del_mappings(arg_2)
+        keys = [re.escape(k) for k in del_mappings.keys()]
+        pattern = '|'.join(sorted(keys))
+        result = re.sub(pattern, lambda x: del_mappings.get(x.group(0)), standard_in)
+        squash_chars = sys.argv[2]
+        pattern = re.compile(rf'({"|".join(re.escape(char) for char in get_char_list(squash_chars))})\1+')
+        result = pattern.sub(lambda x: x.group(1), result)
+        print(result)
     else:
         if arg_1 == "-d":
             char_mappings = generate_del_mappings(arg_2)
