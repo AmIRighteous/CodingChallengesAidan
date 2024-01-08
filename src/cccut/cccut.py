@@ -15,6 +15,7 @@
 
     6. Refactor - This isn’t really step 6, I tend to refactor as I go. As the software evolves I will have to change things that were done to enable the development of a walking skeleton (i.e. I might not handle concurrent clients when I handle PING). I will also refactor as I gain a better understanding of the challenges and my design evolves.
 """
+import sys
 
 
 def parse_cli(args: list[str]) -> dict:
@@ -43,7 +44,7 @@ def parse_cli(args: list[str]) -> dict:
             elif '"' in arg:
                 flags["columns"] = [int(x) for x in arg[3:-1].split(" ")]
             else:
-                flags["columns"] = [int(arg[2:])]
+                flags["columns"] = [int(x) for x in arg[2:].split()]
         elif "cccut.py" in arg:
             continue
         elif arg == "-":
@@ -55,9 +56,28 @@ def parse_cli(args: list[str]) -> dict:
     return flags
 
 
-def hello_world() -> None:
-    print("hello world")
+def read_file(flags: dict) -> list[list[str]]:
+    output = []
+    if "stdin" in flags:
+        for line in sys.stdin.readlines():
+            data = line.strip('\n').split(flags['delimiter'])
+            output.append([data[i] for i in range(len(data)) if (i + 1) in flags['columns']])
+            if not output[-1]:
+                output.pop()
+    else:
+        filename = flags["file_name"]
+        with open(filename, "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                data = line.strip('\n').split(flags['delimiter'])
+                output.append([data[i] for i in range(len(data)) if (i+1) in flags['columns']])
+                if not output[-1]:
+                    output.pop()
+    return output
 
 
 if __name__ == '__main__':
-    hello_world()
+    flags = parse_cli(sys.argv)
+    data = read_file(flags)
+    for line in data:
+        print(flags['delimiter'].join(line))
