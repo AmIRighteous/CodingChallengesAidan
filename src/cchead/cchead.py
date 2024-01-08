@@ -47,7 +47,9 @@ def read_file(flags: dict) -> dict:
                         data[file] += f.readline()
                         i+= 1
     else:
-        ...
+        for i in range(10):
+            ui = input("")
+            print(ui)
 
     return data
 

@@ -18,12 +18,12 @@ def test_parse_cli(sys_argv, expected_result):
 
 
 @pytest.mark.parametrize("flags, expected_data", [
-    # ({"lines": 1, "file_names": ["test.txt"]}, {"test.txt": "aaa\n"}),
-    # ({"chars": 1, "file_names": ["test.txt"]}, {"test.txt": "a"}),
-    # ({"chars": 3, "file_names": ["test.txt"]}, {"test.txt": "aaa"}),
-    # ({"chars": 50, "file_names": ["test.txt"]}, {"test.txt": "aaa\nbbb\nccc"}),
-    # ({"lines": 3, "file_names": ["test.txt"]}, {"test.txt": "aaa\nbbb\nccc"}),
-    # ({"lines": 10, "file_names": ["test.txt"]}, {"test.txt": "aaa\nbbb\nccc"}),
+    ({"lines": 1, "file_names": ["test.txt"]}, {"test.txt": "aaa\n"}),
+    ({"chars": 1, "file_names": ["test.txt"]}, {"test.txt": "a"}),
+    ({"chars": 3, "file_names": ["test.txt"]}, {"test.txt": "aaa"}),
+    ({"chars": 50, "file_names": ["test.txt"]}, {"test.txt": "aaa\nbbb\nccc"}),
+    ({"lines": 3, "file_names": ["test.txt"]}, {"test.txt": "aaa\nbbb\nccc"}),
+    ({"lines": 10, "file_names": ["test.txt"]}, {"test.txt": "aaa\nbbb\nccc"}),
     ({"lines": 10, "file_names": ["small.txt"]}, {"test.txt": "aaa\nbbb\nccc"}),
 ])
 def test_read_file(flags, expected_data):
