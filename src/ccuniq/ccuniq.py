@@ -60,5 +60,81 @@ def parse_cli(args: list[str]) -> dict:
 
     return flags
 
+
+def parse_normal(lines: list) -> str:
+    prev_line = lines[0]
+    uniq_lines = prev_line
+    for i in range(1, len(lines)):
+        line = lines[i]
+        if line != prev_line:
+            uniq_lines += line
+            prev_line = line
+    return uniq_lines
+
+
+def parse_count_lines(lines: list) -> str:
+    data = {"lines": [], "line_count": {}}
+    for i in range(len(lines)):
+        line = lines[i]
+        if line in data["line_count"]:
+            data["line_count"][line] += 1
+        else:
+            data["lines"].append(line)
+            data["line_count"][line] = 1
+    temp = ""
+    for line in lines:
+        temp+=str(data["line_count"][line]) + " " + line
+    return temp
+
+
+def parse_repeated_lines(lines: list) -> str:
+    out = ""
+    found_repeats = set()
+    prev_line = lines[0]
+    for i in range(1, len(lines)):
+        line = lines[i]
+        if line == prev_line and line not in found_repeats:
+            found_repeats.add(line)
+            out += line
+        prev_line = line
+    return out
+
+
+def parse_unique_lines(lines: list) -> str:
+    temp = []
+    seen = set()
+    for i in range(len(lines)):
+        line = lines[i]
+        if line not in seen:
+            temp.append(line)
+            seen.add(line)
+        elif line in temp:
+            temp = list(filter(lambda x: x != line, temp))
+
+    return "".join(temp)
+
+
 if __name__ == '__main__':
+    output = ""
     flags = parse_cli(sys.argv)
+    if flags["input"] != STD.IN:
+        with open(flags["input"], "r", encoding='utf-8') as f:
+            lines = f.readlines()
+    else:
+        lines = sys.stdin.readlines()
+    if len(flags["output_mods"]) == 0:
+        output = parse_normal(lines)
+    elif len(flags["output_mods"]) == 1:
+        mod = flags["output_mods"][0]
+        if mod == "c":
+            output = parse_count_lines(lines)
+        elif mod == "d":
+            output = parse_repeated_lines(lines)
+        elif mod == "u":
+            output = parse_unique_lines(lines)
+
+    if flags["output"] != STD.OUT:
+        with open(flags["output"], "w") as f:
+            f.write(output)
+    else:
+        print(output, end='')
