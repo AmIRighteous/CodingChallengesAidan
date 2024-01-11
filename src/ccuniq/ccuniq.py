@@ -9,7 +9,7 @@ from enum import Enum
     - -c or --count command keeps track of how many times the line was present in the input
     - -d or --repeated should output only the lines that were repeated
     - -u only prints out unique lines
-    - support for -c -d / -c -u
+    - support for -c -d
 
 
     2. Break down the application into building blocks
@@ -21,7 +21,6 @@ from enum import Enum
 
     4. Build a walking skeleton - once I’ve built any fundamental blocks, I like to build a walking skeleton.
     A walking skeleton is a tiny implementation of a system that performs a very small end-to-end function.
-
 
     5. Flesh out the functionality - Once I have a walking skeleton I start to add flesh to it. Adding more end-to-end slices of functionality by writing tests and then the code to pass them, for the minimum functionality I will need for each block, to deliver the end-to-end slice. Repeat until all the functionality is there.
 
@@ -72,23 +71,25 @@ def parse_normal(lines: list) -> str:
     return uniq_lines
 
 
-def parse_count_lines(lines: list) -> str:
+def parse_count_lines(lines: list, repeated: bool = False) -> str:
     data = {"lines": [], "line_count": {}}
     for i in range(len(lines)):
         line = lines[i]
-        if line in data["line_count"]:
+        if line in data["lines"]:
             data["line_count"][line] += 1
         else:
             data["lines"].append(line)
             data["line_count"][line] = 1
     temp = ""
-    for line in lines:
-        temp+=str(data["line_count"][line]) + " " + line
+    for line in data["lines"]:
+        if (repeated and data["line_count"][line] > 1) or not repeated:
+            temp += str(data["line_count"][line]) + " " + line
     return temp
 
 
 def parse_repeated_lines(lines: list) -> str:
     out = ""
+    count_lines = []
     found_repeats = set()
     prev_line = lines[0]
     for i in range(1, len(lines)):
@@ -96,6 +97,7 @@ def parse_repeated_lines(lines: list) -> str:
         if line == prev_line and line not in found_repeats:
             found_repeats.add(line)
             out += line
+            count_lines.append(line)
         prev_line = line
     return out
 
@@ -132,7 +134,8 @@ if __name__ == '__main__':
             output = parse_repeated_lines(lines)
         elif mod == "u":
             output = parse_unique_lines(lines)
-
+    elif len(flags["output_mods"]) == 2:
+        output = parse_count_lines(lines, repeated=True)
     if flags["output"] != STD.OUT:
         with open(flags["output"], "w") as f:
             f.write(output)
