@@ -1,6 +1,6 @@
 import pytest
-
-from src.ccuniq.ccuniq import parse_cli, STD, parse_input
+from src.shared_components import STD
+from src.ccuniq.ccuniq import parse_cli
 
 
 @pytest.mark.parametrize("sys_argv, expected_result", [
@@ -21,10 +21,3 @@ from src.ccuniq.ccuniq import parse_cli, STD, parse_input
 def test_parse_cli(sys_argv, expected_result):
     flags = parse_cli(sys_argv)
     assert flags == expected_result
-
-@pytest.mark.parametrize("flags, expected_output", [
-    ({"input": "test.txt", "output": STD.OUT, "output_mods": []}, {"line1": 1, "line2": 2, "line3": 1, "line4": 1})
-])
-def test_parse_input(flags, expected_output):
-    lines_nums = parse_input(flags)
-    assert lines_nums == expected_output

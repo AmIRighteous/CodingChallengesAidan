@@ -5,6 +5,7 @@
 import argparse
 import os
 import re
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-c", help="Byte Count of File")
@@ -14,7 +15,8 @@ parser.add_argument("-m", help="Char Count of File")
 
 args = parser.parse_args()
 
-def get_bytes(file_path: str)->int:
+
+def get_bytes(file_path: str) -> int:
     try:
         size = os.path.getsize(file_path)
         return size
@@ -23,7 +25,7 @@ def get_bytes(file_path: str)->int:
         return -1
 
 
-def get_lines(file_path: str)-> int:
+def get_lines(file_path: str) -> int:
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             line_count = sum(1 for line in f)
@@ -33,7 +35,7 @@ def get_lines(file_path: str)-> int:
         return -1
 
 
-def get_words(file_path: str)->int:
+def get_words(file_path: str) -> int:
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             file_content = f.read()
@@ -45,7 +47,7 @@ def get_words(file_path: str)->int:
         return -1
 
 
-def get_chars(file_path: str)-> int:
+def get_chars(file_path: str) -> int:
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             file_content = f.read()
@@ -75,6 +77,7 @@ def print_hi(name):
         output = str(get_chars(args.m)) + " " + args.m
 
     print(output)
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

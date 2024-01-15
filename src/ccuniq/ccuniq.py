@@ -1,5 +1,8 @@
 import sys
 from enum import Enum
+
+from src.shared_components import STD
+
 """
     1. Sketch out the vision - what is the application going to do at a high level.
     -read input file, compare adjacent lines for duplicates, only writes unique lines to output file
@@ -29,9 +32,7 @@ from enum import Enum
 """
 
 
-class STD(Enum):
-    IN = "STDIN"
-    OUT = "STDOUT"
+
 
 
 def parse_cli(args: list[str]) -> dict:
