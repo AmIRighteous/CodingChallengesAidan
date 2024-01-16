@@ -25,7 +25,11 @@ import sys
 from enum import Enum
 import random
 from timeit import Timer
-from src.shared_components import STD
+
+
+class STD(Enum):
+    IN = "STDIN"
+    OUT = "STDOUT"
 
 
 class SORT(Enum):
@@ -196,7 +200,17 @@ def random_sort(data):
     return output
 
 
-def sort_coordinator(data, sort_type):
+def filter_for_uniques(data):
+    s = set()
+    for word in data:
+        if word not in s:
+            s.add(word)
+    return list(s)
+
+
+def sort_coordinator(data, sort_type, unique=False):
+    if unique:
+        data = filter_for_uniques(data)
     if sort_type == SORT.MERGE:
         output = merge_sort(data)
     elif sort_type == SORT.QUICK:
@@ -252,17 +266,21 @@ def fetch_input(flags) -> list:
 """
 TODO
 -move main & cctr into their own folders
--add pre-commit linter X
--add more cases to test_read_input
+-add more cases to test_read_input/test_for_uniques
 -add -t flag functionality
 -check off steps!
 """
 if __name__ == "__main__":
-    print("Hello! World!!")
     flags = parse_cli(sys.argv)
     input = fetch_input(flags)
     if flags["timer"]:
-        ...  # TODO Implement
+        output = ""  # TODO Implement
     else:
-        ...  # TODO Implement
-    time_test()
+        output = sort_coordinator(input, flags["sort"], flags["unique"])
+    if flags["output"] == STD.OUT:
+        print("\n".join(output))
+    else:
+        print("before writing to file, output = ", output)
+        with open(flags["output"], "w") as f:
+            for word in output:
+                f.write(str(word) + "\n")

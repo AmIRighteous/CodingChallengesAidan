@@ -262,7 +262,7 @@ and
 Strong
 Chapter
 VII
-Manœuvring
+Manoeuvring
 Chapter
 VIII
 Variation
@@ -1034,7 +1034,7 @@ The
 seventh
 volume
 of
-Mémoires
+Memoires
 concernant
 l’histoire
 les
@@ -1162,7 +1162,7 @@ of
 chapter
 —
 De
-l’habileté
+l’habilete
 dans
 le
 gouvernement
