@@ -59,9 +59,9 @@ def parse_cli(args: list[str]) -> dict:
                 flags["sort"] = SORT.RADIX
             elif "random" in arg:
                 flags["sort"] = SORT.RANDOM
-        elif arg == '-r' or arg == '-R':
+        elif arg == "-r" or arg == "-R":
             flags["sort"] = SORT.RANDOM
-        elif arg == '-t':
+        elif arg == "-t":
             flags["timer"] = True
     return flags
 
@@ -208,15 +208,29 @@ def sort_coordinator(data, sort_type):
     elif sort_type == SORT.RANDOM:
         output = random_sort(data)
     else:
-        raise Exception(f"ERROR: Sort type {sort_type} not matched to known sorting function.")
+        raise Exception(
+            f"ERROR: Sort type {sort_type} not matched to known sorting function."
+        )
     return output
 
 
 def time_test():
-    merge = Timer("""merge_sort(["B", "A", "E", "D", "C"])""", setup="from __main__ import merge_sort")
-    radix = Timer("""radix_sort(["B", "A", "E", "D", "C"])""", setup="from __main__ import radix_sort")
-    heap = Timer("""heap_sort(["B", "A", "E", "D", "C"])""", setup="from __main__ import heap_sort")
-    quick = Timer("""quick_sort(["B", "A", "E", "D", "C"])""", setup="from __main__ import quick_sort")
+    merge = Timer(
+        """merge_sort(["B", "A", "E", "D", "C"])""",
+        setup="from __main__ import merge_sort",
+    )
+    radix = Timer(
+        """radix_sort(["B", "A", "E", "D", "C"])""",
+        setup="from __main__ import radix_sort",
+    )
+    heap = Timer(
+        """heap_sort(["B", "A", "E", "D", "C"])""",
+        setup="from __main__ import heap_sort",
+    )
+    quick = Timer(
+        """quick_sort(["B", "A", "E", "D", "C"])""",
+        setup="from __main__ import quick_sort",
+    )
 
     print("Merge = ", merge.timeit(1000))
     print("Radix = ", radix.timeit(1000))
@@ -224,30 +238,31 @@ def time_test():
     print("Quick = ", quick.timeit(1000))
 
 
-def fetch_input(flags)-> list:
+def fetch_input(flags) -> list:
     if flags["input"] == STD.IN:
         raise Exception("Error, not implemented yet.")
     else:
-        with open(flags["input"], 'r', encoding='utf-8') as f:
+        with open(flags["input"], "r", encoding="utf-8") as f:
             contents = f.read()
-        prime = re.sub(r'\s', ' ', contents)
-        words = prime.strip().replace('\t', ' ').replace('\n', ' ').split()
+        prime = re.sub(r"\s", " ", contents)
+        words = prime.strip().replace("\t", " ").replace("\n", " ").split()
         return words
 
-'''
+
+"""
 TODO
 -move main & cctr into their own folders
--add pre-commit linter
+-add pre-commit linter X
 -add more cases to test_read_input
 -add -t flag functionality
 -check off steps!
-'''
-if __name__ == '__main__':
+"""
+if __name__ == "__main__":
     print("Hello! World!!")
     flags = parse_cli(sys.argv)
     input = fetch_input(flags)
     if flags["timer"]:
-        ... #TODO Implement
+        ...  # TODO Implement
     else:
-        ... #TODO Implement
+        ...  # TODO Implement
     time_test()
