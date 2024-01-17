@@ -22,9 +22,9 @@
 """
 import re
 import sys
+import timeit
 from enum import Enum
 import random
-from timeit import Timer
 
 
 class STD(Enum):
@@ -41,12 +41,18 @@ class SORT(Enum):
 
 
 def parse_cli(args: list[str]) -> dict:
-    flags = {"output": STD.OUT, "unique": False, "sort": SORT.MERGE, "timer": False}
+    flags = {
+        "input": STD.IN,
+        "output": STD.OUT,
+        "unique": False,
+        "sort": SORT.QUICK,
+        "timer": False,
+    }
     for arg in args:
         if arg == "ccsort.py":
             continue
         elif arg.endswith(".txt"):
-            if "input" not in flags:
+            if flags["input"] == STD.IN:
                 flags["input"] = arg
             else:
                 flags["output"] = arg
@@ -54,7 +60,7 @@ def parse_cli(args: list[str]) -> dict:
             flags["unique"] = True
         elif "sort" in arg:
             if "merge" in arg:
-                continue
+                flags["sort"] = SORT.MERGE
             elif "quick" in arg:
                 flags["sort"] = SORT.QUICK
             elif "heap" in arg:
@@ -96,7 +102,8 @@ def merge_sort(data: list) -> list:
                 j += 1
         return arr
 
-    return merge_helper(data)
+    result = merge_helper(data)
+    return result
 
 
 def heap_sort(data):
@@ -202,13 +209,14 @@ def random_sort(data):
 
 def filter_for_uniques(data):
     s = set()
-    for word in data:
-        if word not in s:
-            s.add(word)
+    for piece in data:
+        if piece not in s:
+            s.add(piece)
     return list(s)
 
 
 def sort_coordinator(data, sort_type, unique=False):
+    print("Using sort type:", sort_type.value)
     if unique:
         data = filter_for_uniques(data)
     if sort_type == SORT.MERGE:
@@ -228,59 +236,74 @@ def sort_coordinator(data, sort_type, unique=False):
     return output
 
 
-def time_test():
-    merge = Timer(
-        """merge_sort(["B", "A", "E", "D", "C"])""",
+def time_test(input):
+    timeit.template = """
+def inner(_it, _timer{init}):
+    {setup}
+    _t0 = _timer()
+    for _i in _it:
+        retval = {stmt}
+    _t1 = _timer()
+    return _t1 - _t0, retval
+    """
+    merge_str = f"""merge_sort({input})"""
+    merge = timeit.Timer(
+        stmt=merge_str,
         setup="from __main__ import merge_sort",
     )
-    radix = Timer(
-        """radix_sort(["B", "A", "E", "D", "C"])""",
+    radix_str = f"""radix_sort({input})"""
+    radix = timeit.Timer(
+        stmt=radix_str,
         setup="from __main__ import radix_sort",
     )
-    heap = Timer(
-        """heap_sort(["B", "A", "E", "D", "C"])""",
+    heap_str = f"""heap_sort({input})"""
+    heap = timeit.Timer(
+        stmt=heap_str,
         setup="from __main__ import heap_sort",
     )
-    quick = Timer(
-        """quick_sort(["B", "A", "E", "D", "C"])""",
+    quick_str = f"""quick_sort({input})"""
+    quick = timeit.Timer(
+        stmt=quick_str,
         setup="from __main__ import quick_sort",
     )
+    vals = merge.timeit(1000)
+    times = {
+        SORT.MERGE: vals[0],
+        SORT.RADIX: radix.timeit(1000)[0],
+        SORT.HEAP: heap.timeit(1000)[0],
+        SORT.QUICK: quick.timeit(1000)[0],
+    }
+    return vals[1], times
 
-    print("Merge = ", merge.timeit(1000))
-    print("Radix = ", radix.timeit(1000))
-    print("Heap = ", heap.timeit(1000))
-    print("Quick = ", quick.timeit(1000))
 
-
-def fetch_input(flags) -> list:
-    if flags["input"] == STD.IN:
-        raise Exception("Error, not implemented yet.")
+def fetch_input(input_flag) -> list:
+    if input_flag == STD.IN:
+        contents = "".join(sys.stdin.readlines())
     else:
-        with open(flags["input"], "r", encoding="utf-8") as f:
+        with open(input_flag, "r", encoding="utf-8") as f:
             contents = f.read()
-        prime = re.sub(r"\s", " ", contents)
-        words = prime.strip().replace("\t", " ").replace("\n", " ").split()
-        return words
+    prime = re.sub(r"\s", " ", contents)
+    words = prime.strip().replace("\t", " ").replace("\n", " ").split()
+    return words
 
 
 """
 TODO
 -move main & cctr into their own folders
--add more cases to test_read_input/test_for_uniques
--add -t flag functionality
--check off steps!
+-add more cases to test_fetch_input
 """
 if __name__ == "__main__":
     flags = parse_cli(sys.argv)
-    input = fetch_input(flags)
+    input = fetch_input(flags["input"])
     if flags["timer"]:
-        output = ""  # TODO Implement
+        output, times = time_test(input)
+        for sort, time in times.items():
+            print(f"{sort.value}: {time}")
     else:
         output = sort_coordinator(input, flags["sort"], flags["unique"])
     if flags["output"] == STD.OUT:
         print("\n".join(output))
     else:
-        print("before writing to file, output = ", output)
         with open(flags["output"], "w") as f:
             for word in output:
                 f.write(str(word) + "\n")

@@ -19,7 +19,7 @@ from src.ccsort.ccsort import (
                 "input": "text.txt",
                 "output": STD.OUT,
                 "unique": False,
-                "sort": SORT.MERGE,
+                "sort": SORT.QUICK,
                 "timer": False,
             },
         ),
@@ -29,7 +29,7 @@ from src.ccsort.ccsort import (
                 "input": "text.txt",
                 "output": "output.txt",
                 "unique": False,
-                "sort": SORT.MERGE,
+                "sort": SORT.QUICK,
                 "timer": False,
             },
         ),
@@ -39,7 +39,7 @@ from src.ccsort.ccsort import (
                 "input": "text.txt",
                 "output": STD.OUT,
                 "unique": False,
-                "sort": SORT.MERGE,
+                "sort": SORT.QUICK,
                 "timer": True,
             },
         ),
@@ -49,7 +49,7 @@ from src.ccsort.ccsort import (
                 "input": "text.txt",
                 "output": STD.OUT,
                 "unique": True,
-                "sort": SORT.MERGE,
+                "sort": SORT.QUICK,
                 "timer": False,
             },
         ),
@@ -223,15 +223,24 @@ def test_random_sort():
         ),
     ],
 )
-def test_read_input(input_file, expected_output):
-    flags = {"input": input_file}
-    actual_output = fetch_input(flags)
+def test_fetch_input(input_file, expected_output):
+    actual_output = fetch_input(input_file)
     assert expected_output == actual_output
 
 
 @pytest.mark.parametrize(
-    "input, expected_output", [(["a", "a", "b"], ["a", "b"])]
-)  # TODO add more testcases
+    "input, expected_output",
+    [
+        (["a", "a", "b"], ["a", "b"]),
+        ([1, 1, 2], [1, 2]),
+        ("test.txt", ["A", "B", "C", "D", "E", "F", "G", "H", "I"]),
+        ("test2.txt", ["A", "ABC", "B", "C", "CBA"]),
+    ],
+)
 def test_for_uniques(input, expected_output):
-    actual = filter_for_uniques(input)
+    if isinstance(input, list):
+        actual = filter_for_uniques(input)
+    elif isinstance(input, str):
+        file_input = fetch_input(input)
+        actual = filter_for_uniques(file_input)
     assert sorted(actual) == expected_output
