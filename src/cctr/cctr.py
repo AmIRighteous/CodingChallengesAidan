@@ -5,12 +5,51 @@ import re
 special_commands: dict[str] = {
     "[:alnum:]": [chr(i) for i in range(33, 127) if chr(i).isalnum()],
     "[:alpha:]": [chr(ord(i)) for i in string.ascii_letters],
-    "[:blank:]": ['\x09', '\x20'],
-    "[:cntrl:]": ['\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07', '\x08', '\t', '\n', '\x0b', '\x0c', '\r', '\x0e', '\x0f', '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17', '\x18', '\x19', '\x1a', '\x1b', '\x1c', '\x1d', '\x1e', '\x1f'],
-    "[:digit:]": [1,2,3,4,5,6,7,8,9,0],
+    "[:blank:]": ["\x09", "\x20"],
+    "[:cntrl:]": [
+        "\x00",
+        "\x01",
+        "\x02",
+        "\x03",
+        "\x04",
+        "\x05",
+        "\x06",
+        "\x07",
+        "\x08",
+        "\t",
+        "\n",
+        "\x0b",
+        "\x0c",
+        "\r",
+        "\x0e",
+        "\x0f",
+        "\x10",
+        "\x11",
+        "\x12",
+        "\x13",
+        "\x14",
+        "\x15",
+        "\x16",
+        "\x17",
+        "\x18",
+        "\x19",
+        "\x1a",
+        "\x1b",
+        "\x1c",
+        "\x1d",
+        "\x1e",
+        "\x1f",
+    ],
+    "[:digit:]": [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
     "[:lower:]": [chr(ord(i)) for i in string.ascii_lowercase],
     "[:print:]": [chr(i) for i in range(32, 127)],
-    "[:punct:]": [chr(i) for i in range(33, 127) if chr(i).isprintable() and chr(i).isspace() == False and chr(i).isalnum() == False],
+    "[:punct:]": [
+        chr(i)
+        for i in range(33, 127)
+        if chr(i).isprintable()
+        and chr(i).isspace() == False
+        and chr(i).isalnum() == False
+    ],
     "[:space:]": [chr(i) for i in range(128) if chr(i).isspace()],
     "[:upper:]": [chr(ord(i)) for i in string.ascii_uppercase],
 }
@@ -25,7 +64,7 @@ def get_char_list(set_input: str) -> list[str]:
         return [chr(i) for i in range(ord(set_input[0]), ord(set_input[2]) + 1)]
 
 
-def generate_sub_mappings(from_set: str, to_set: str)->dict[str]:
+def generate_sub_mappings(from_set: str, to_set: str) -> dict[str]:
     from_list = get_char_list(from_set)
     to_list = get_char_list(to_set)
     error_msg = ""
@@ -53,17 +92,21 @@ def tr_driver() -> None:
     arg_2 = sys.argv[2]
     standard_in = sys.stdin.read()
     if arg_1 == "-s":
-        pattern = re.compile(rf'({"|".join(re.escape(char) for char in get_char_list(arg_2))})\1+')
+        pattern = re.compile(
+            rf'({"|".join(re.escape(char) for char in get_char_list(arg_2))})\1+'
+        )
         result = pattern.sub(lambda x: x.group(1), standard_in)
         print(result)
     elif arg_1 == "-ds":
         # delete first, then squash
         del_mappings = generate_del_mappings(arg_2)
         keys = [re.escape(k) for k in del_mappings.keys()]
-        pattern = '|'.join(sorted(keys))
+        pattern = "|".join(sorted(keys))
         result = re.sub(pattern, lambda x: del_mappings.get(x.group(0)), standard_in)
         squash_chars = sys.argv[2]
-        pattern = re.compile(rf'({"|".join(re.escape(char) for char in get_char_list(squash_chars))})\1+')
+        pattern = re.compile(
+            rf'({"|".join(re.escape(char) for char in get_char_list(squash_chars))})\1+'
+        )
         result = pattern.sub(lambda x: x.group(1), result)
         print(result)
     else:
@@ -72,11 +115,11 @@ def tr_driver() -> None:
         else:
             char_mappings = generate_sub_mappings(arg_1, arg_2)
         keys = [re.escape(k) for k in char_mappings.keys()]
-        pattern = '|'.join(sorted(keys))
+        pattern = "|".join(sorted(keys))
         result = re.sub(pattern, lambda x: char_mappings.get(x.group(0)), standard_in)
         print(result)
     return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     tr_driver()

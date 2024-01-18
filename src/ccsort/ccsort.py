@@ -287,11 +287,6 @@ def fetch_input(input_flag) -> list:
     return words
 
 
-"""
-TODO
--move main & cctr into their own folders
--add more cases to test_fetch_input
-"""
 if __name__ == "__main__":
     flags = parse_cli(sys.argv)
     input = fetch_input(flags["input"])

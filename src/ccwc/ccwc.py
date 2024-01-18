@@ -27,7 +27,7 @@ def get_bytes(file_path: str) -> int:
 
 def get_lines(file_path: str) -> int:
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             line_count = sum(1 for line in f)
             return line_count
     except FileNotFoundError:
@@ -37,10 +37,10 @@ def get_lines(file_path: str) -> int:
 
 def get_words(file_path: str) -> int:
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             file_content = f.read()
-        prime = re.sub(r'\s+', ' ', file_content)
-        modded = prime.strip().replace('\t', ' ').replace('\n', ' ').split()
+        prime = re.sub(r"\s+", " ", file_content)
+        modded = prime.strip().replace("\t", " ").replace("\n", " ").split()
         return len(modded)
     except FileNotFoundError:
         print(f"File not Found: {file_path}")
@@ -49,11 +49,11 @@ def get_words(file_path: str) -> int:
 
 def get_chars(file_path: str) -> int:
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             file_content = f.read()
         chars = 0
         for char in file_content:
-            if char == '\n':
+            if char == "\n":
                 chars += 2
             else:
                 chars += 1
@@ -65,7 +65,7 @@ def get_chars(file_path: str) -> int:
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+    print(f"Hi, {name}")  # Press Ctrl+F8 to toggle the breakpoint.
     output = ""
     if args.c:
         output = str(get_bytes(args.c)) + " " + args.c
@@ -80,7 +80,7 @@ def print_hi(name):
 
 
 # Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('Aidan')
+if __name__ == "__main__":
+    print_hi("Aidan")
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
