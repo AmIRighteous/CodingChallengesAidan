@@ -68,6 +68,6 @@ def test_parse_cli(sys_argv, expected_result):
     assert flags == expected_result
 
 
-@pytest.mark.parametrize("sys_argv", [(["ccsed.py", "-n", "2,4p", "test.txt"])])
+@pytest.mark.parametrize("sys_argv", [(["ccsed.py", "-n", "/roads/p", "test.txt"])])
 def test_runner(sys_argv):
     runner(sys_argv)

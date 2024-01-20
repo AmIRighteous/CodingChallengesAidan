@@ -1,7 +1,3 @@
-# parse input
-# parse cli instructions
-# apply cli instructions to input
-# output result
 import sys
 import re
 from enum import Enum
@@ -72,18 +68,17 @@ def filter_input(input, flags):
             prime.append(re.sub(to, fro, input[i]))
     elif flags["double_space"]:
         for i in range(len(input)):
-            prime.append(input[i])
-            prime.append("\n")
+            prime.append(input[i] + "\n")
     elif flags["regex_keys"]:
-        patt = r"^.*" + flags["regex_keys"][0] + r".*$"
+        patt = rf'^.*{re.escape(flags["regex_keys"])}.*$'
         for i in range(len(input)):
             if bool(re.match(patt, input[i])):
                 prime.append(input[i])
     elif flags["lines"]:
         start, end = flags["lines"][0], flags["lines"][1]
         for i in range(start, end + 1):
-            prime.append(f"{i}\t{input[i]}\n")
-    return "".join(prime)
+            prime.append(f"{i}\t{input[i]}")
+    return "\n".join(prime)
 
 
 def runner(args):
@@ -91,9 +86,9 @@ def runner(args):
     input = fetch_input(flags["input"])
     output = filter_input(input, flags)
     if flags["output"] == STD.OUT:
-        print(output)
+        print(output, end="")
     else:
-        with open(flags["output"], "w") as f:
+        with open(flags["output"], "w", encoding="utf-8") as f:
             f.write(output)
 
 
