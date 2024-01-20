@@ -1,6 +1,6 @@
 import pytest
 
-from src.ccsed.ccsed import parse_cli, STD
+from src.ccsed.ccsed import parse_cli, STD, runner
 
 
 @pytest.mark.parametrize(
@@ -12,7 +12,7 @@ from src.ccsed.ccsed import parse_cli, STD
                 "input": "test.txt",
                 "double_space": False,
                 "regex_swaps": {"this": "that"},
-                "regex_keys": [],
+                "regex_keys": "",
                 "lines": [],
                 "output": STD.OUT,
             },
@@ -23,7 +23,7 @@ from src.ccsed.ccsed import parse_cli, STD
                 "input": STD.IN,
                 "double_space": False,
                 "regex_swaps": {},
-                "regex_keys": [],
+                "regex_keys": "",
                 "lines": [2, 4],
                 "output": STD.OUT,
             },
@@ -34,7 +34,7 @@ from src.ccsed.ccsed import parse_cli, STD
                 "input": "test.txt",
                 "double_space": False,
                 "regex_swaps": {},
-                "regex_keys": ["roads"],
+                "regex_keys": "roads",
                 "lines": [],
                 "output": STD.OUT,
             },
@@ -45,7 +45,7 @@ from src.ccsed.ccsed import parse_cli, STD
                 "input": "test.txt",
                 "double_space": True,
                 "regex_swaps": {},
-                "regex_keys": [],
+                "regex_keys": "",
                 "lines": [],
                 "output": STD.OUT,
             },
@@ -56,7 +56,7 @@ from src.ccsed.ccsed import parse_cli, STD
                 "input": "test.txt",
                 "double_space": False,
                 "regex_swaps": {"Life": "Code"},
-                "regex_keys": [],
+                "regex_keys": "",
                 "lines": [],
                 "output": "test.txt",
             },
@@ -66,3 +66,8 @@ from src.ccsed.ccsed import parse_cli, STD
 def test_parse_cli(sys_argv, expected_result):
     flags = parse_cli(sys_argv)
     assert flags == expected_result
+
+
+@pytest.mark.parametrize("sys_argv", [(["ccsed.py", "-n", "2,4p", "test.txt"])])
+def test_runner(sys_argv):
+    runner(sys_argv)
