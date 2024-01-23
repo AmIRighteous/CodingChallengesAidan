@@ -18,6 +18,7 @@
 #     output = {k: substrings.count(k) for k in set(substrings)}
 #     return output
 #
+from typing import List
 
 
 def gsg_func(s: str) -> dict[str]:
@@ -31,6 +32,34 @@ def gsg_func(s: str) -> dict[str]:
             else:
                 occ_by_substr[prime] = 1
     return occ_by_substr
+
+
+def maxLength(arr: List[str]) -> int:
+    max_len = [
+        0
+    ]  # init len to keep track of max length of the concat string without repeats
+    backTrack(arr, "", 0, max_len)  # call backtrack
+    return max_len[0]
+
+
+def backTrack(arr, current, start, max_len):
+    if max_len[0] < len(current):
+        max_len[0] = len(current)
+    for i in range(start, len(arr)):
+        if not isValid(current, arr[i]):
+            continue
+        backTrack(arr, current + arr[i], i + 1, max_len)
+
+
+def isValid(currentString, newString):
+    charSet = set()
+    for ch in newString:
+        if ch in charSet:
+            return False
+        charSet.add(ch)
+        if ch in currentString:
+            return False
+    return True
 
 
 if __name__ == "__main__":
